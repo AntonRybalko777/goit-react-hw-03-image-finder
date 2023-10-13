@@ -17,13 +17,29 @@ export class App extends Component {
 
   async componentDidUpdate(_, prevState) {
     const { page, query } = this.state;
-    if (page !== prevState.page || query !== prevState.query) {
+    if (query !== prevState.query) {
       try {
         this.setState({ loader: true });
         const fetchedImages = await fetchImages(page, query);
         this.setState({
           cards: fetchedImages.hits,
         });
+      } catch (e) {
+        this.setState({
+          error: true,
+        });
+      } finally {
+        this.setState({ loader: false });
+      }
+    }
+
+    if (page !== prevState.page && page !== 1) {
+      try {
+        this.setState({ loader: true });
+        const fetchedImages = await fetchImages(page, query);
+        this.setState(prevState => ({
+          cards: [...prevState.cards, ...fetchedImages.hits],
+        }));
       } catch (e) {
         this.setState({
           error: true,
@@ -51,6 +67,15 @@ export class App extends Component {
     return (
       <Container>
         <Searchbar onSubmit={this.getQuery} />
+
+        {this.state.error && (
+          <ErrorMsg>
+            Whoops.. Something went wrong. Please reload the page.{' '}
+          </ErrorMsg>
+        )}
+        {this.state.cards.length > 0 && (
+          <ImageGallery images={this.state.cards} />
+        )}
         {this.state.loader && (
           <ThreeDots
             height="80"
@@ -61,14 +86,6 @@ export class App extends Component {
             wrapperStyle={{ display: 'flex', justifyContent: 'center' }}
             visible={true}
           />
-        )}
-        {this.state.error && (
-          <ErrorMsg>
-            Whoops.. Something went wrong. Please reload the page.{' '}
-          </ErrorMsg>
-        )}
-        {this.state.cards.length > 0 && (
-          <ImageGallery images={this.state.cards} />
         )}
         {this.state.cards.length > 0 && <Button onClick={this.loadMore} />}
       </Container>
