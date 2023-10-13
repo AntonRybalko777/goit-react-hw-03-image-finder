@@ -4,6 +4,7 @@ import { Container, ErrorMsg } from './App.styled';
 import { ImageGallery } from 'components/ImageGallery/ImageGallery';
 import { fetchImages } from 'api';
 import { ThreeDots } from 'react-loader-spinner';
+import { Button } from 'components/Button/Button';
 
 export class App extends Component {
   state = {
@@ -23,7 +24,7 @@ export class App extends Component {
         this.setState({
           cards: fetchedImages.hits,
         });
-      } catch (error) {
+      } catch (e) {
         this.setState({
           error: true,
         });
@@ -36,7 +37,14 @@ export class App extends Component {
   getQuery = newQuery => {
     this.setState({
       query: newQuery,
+      page: 1,
     });
+  };
+
+  loadMore = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
   };
 
   render() {
@@ -62,6 +70,7 @@ export class App extends Component {
         {this.state.cards.length > 0 && (
           <ImageGallery images={this.state.cards} />
         )}
+        {this.state.cards.length > 0 && <Button onClick={this.loadMore} />}
       </Container>
     );
   }
