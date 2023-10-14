@@ -17,7 +17,7 @@ export class App extends Component {
   };
 
   async componentDidUpdate(_, prevState) {
-    const { cards, page, query, loadMore } = this.state;
+    const { page, query } = this.state;
     if (query !== prevState.query) {
       try {
         this.setState({ loader: true });
