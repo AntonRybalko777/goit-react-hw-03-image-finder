@@ -13,10 +13,11 @@ export class App extends Component {
     cards: [],
     loader: false,
     error: false,
+    loadMore: false,
   };
 
   async componentDidUpdate(_, prevState) {
-    const { page, query } = this.state;
+    const { cards, page, query } = this.state;
     if (query !== prevState.query) {
       try {
         this.setState({ loader: true });
@@ -47,6 +48,12 @@ export class App extends Component {
       } finally {
         this.setState({ loader: false });
       }
+    }
+
+    if (cards.length > 0) {
+      this.setState({
+        loadMore: true,
+      });
     }
   }
 
@@ -87,7 +94,7 @@ export class App extends Component {
             visible={true}
           />
         )}
-        {this.state.cards.length > 0 && <Button onClick={this.loadMore} />}
+        {this.state.loadMore && <Button onClick={this.loadMore} />}
       </Container>
     );
   }
