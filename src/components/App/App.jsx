@@ -17,13 +17,14 @@ export class App extends Component {
   };
 
   async componentDidUpdate(_, prevState) {
-    const { cards, page, query } = this.state;
+    const { cards, page, query, loadMore } = this.state;
     if (query !== prevState.query) {
       try {
         this.setState({ loader: true });
         const fetchedImages = await fetchImages(page, query);
         this.setState({
           cards: fetchedImages.hits,
+          loadMore: this.state.page < Math.ceil(fetchedImages.totalHits / 12),
         });
       } catch (e) {
         this.setState({
@@ -40,6 +41,7 @@ export class App extends Component {
         const fetchedImages = await fetchImages(page, query);
         this.setState(prevState => ({
           cards: [...prevState.cards, ...fetchedImages.hits],
+          loadMore: this.state.page < Math.ceil(fetchedImages.totalHits / 12),
         }));
       } catch (e) {
         this.setState({
@@ -48,12 +50,6 @@ export class App extends Component {
       } finally {
         this.setState({ loader: false });
       }
-    }
-
-    if (cards.length > 0) {
-      this.setState({
-        loadMore: true,
-      });
     }
   }
 
