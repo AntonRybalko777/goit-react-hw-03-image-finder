@@ -11,3 +11,8 @@ export const Image = styled.img`
     cursor: zoom-in;
   }
 `;
+
+export const ModalImg = styled.img`
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 24px);
+`;
